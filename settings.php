@@ -30,25 +30,28 @@ $autoSave = new AutoSaveManager('whatsapp.xml');
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="enhanced_style.css" />
     <style>
-        /* Styles spécifiques pour les paramètres */
+        /* Styles spécifiques pour les paramètres avec couleurs WhatsApp */
         .settings-container {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #075e54; /* Vert foncé WhatsApp */
             min-height: 100vh;
             padding: 20px;
+            color: #ffffff; /* Texte blanc pour contraste */
         }
         
         .settings-wrapper {
-            background: white;
+            background: #ffffff; /* Fond blanc pour le contenu */
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             overflow: hidden;
-            max-width: 1000px;
+            width: 800px; /* Ajustement pour un carré */
+            height: 800px; /* Ajustement pour un carré */
             margin: 0 auto;
+            overflow-y: auto; /* Permet de scroller si le contenu dépasse */
         }
         
         .settings-header {
-            background: linear-gradient(45deg, #2d2341, #3e2f5b);
-            color: white;
+            background: #25D366; /* Vert WhatsApp pour l'en-tête */
+            color: #ffffff;
             padding: 25px;
             display: flex;
             justify-content: space-between;
@@ -63,7 +66,7 @@ $autoSave = new AutoSaveManager('whatsapp.xml');
         
         .back-button {
             background: rgba(255,255,255,0.2);
-            color: white;
+            color: #ffffff;
             text-decoration: none;
             padding: 10px 20px;
             border-radius: 25px;
@@ -75,6 +78,132 @@ $autoSave = new AutoSaveManager('whatsapp.xml');
         .back-button:hover {
             background: rgba(255,255,255,0.3);
             transform: translateY(-2px);
+        }
+        
+        .settings-navigation {
+            background: #128C7E; /* Vert moyen WhatsApp */
+            max-height: 15%; /* Limite la hauteur de la navigation */
+            overflow-y: auto; /* Permet de scroller si nécessaire */
+            padding: 10px 0;
+        }
+        
+        .nav-tab {
+            background: none;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            text-align: left;
+        }
+        
+        .nav-tab.active {
+            background: #25D366; /* Vert clair WhatsApp pour l'onglet actif */
+        }
+        
+        .nav-tab:hover {
+            background: #075e54; /* Vert foncé au survol */
+        }
+        
+        .settings-content {
+            max-height: 85%; /* Limite la hauteur pour laisser de l'espace à la navigation */
+            overflow-y: auto; /* Permet de scroller si nécessaire */
+            padding: 20px;
+            background: #ffffff; /* Fond blanc pour le contenu */
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modern-btn.primary {
+            background: #25D366; /* Vert WhatsApp pour les boutons primaires */
+            color: #ffffff;
+        }
+        
+        .modern-btn.primary:hover {
+            background: #128C7E; /* Vert moyen au survol */
+        }
+        
+        /* Ajustement pour la liste des contacts */
+        .contacts-grid {
+            display: block; /* Changement de grille à liste */
+        }
+        
+        .contact-card {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f7f7f7;
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        .contact-card:hover {
+            background: #e0e0e0;
+        }
+        
+        .avatar-container {
+            margin-right: 15px;
+        }
+        
+        .contact-info {
+            flex-grow: 1;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        /* Ajustement pour les groupes */
+        .groups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .group-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 150px; /* Hauteur fixe pour éviter le débordement */
+            padding: 15px;
+            background: #f7f7f7;
+            border-radius: 10px;
+            transition: background 0.3s ease;
+            overflow: hidden; /* Empêche le débordement */
+        }
+        
+        .group-card:hover {
+            background: #e0e0e0;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+        
+        .group-info {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .group-name {
+            margin-top: auto; /* Déplace le nom en bas */
+            font-weight: bold;
+            word-wrap: break-word; /* Permet le retour à la ligne */
+            max-width: 100%;
         }
     </style>
 </head>
@@ -99,17 +228,9 @@ $autoSave = new AutoSaveManager('whatsapp.xml');
                     <span class="tab-text">Groupes</span>
                     <span class="tab-count"><?php echo count($xml->discussions->groupes->groupe); ?></span>
                 </button>
-                <button class="nav-tab" onclick="showTab('backup')" data-icon="backup" role="tab" aria-selected="false" aria-controls="backup-tab">
-                    <span class="tab-icon">💾</span>
-                    <span class="tab-text">Sauvegarde</span>
-                </button>
-                <button class="nav-tab" onclick="showTab('history')" data-icon="history" role="tab" aria-selected="false" aria-controls="history-tab">
-                    <span class="tab-icon">📋</span>
-                    <span class="tab-text">Historique</span>
-                </button>
-                <button class="nav-tab" onclick="showTab('advanced')" data-icon="advanced" role="tab" aria-selected="false" aria-controls="advanced-tab">
+                <button class="nav-tab" onclick="showTab('parameter')" data-icon="advanced" role="tab" aria-selected="false" aria-controls="parameter-tab">
                     <span class="tab-icon">🔧</span>
-                    <span class="tab-text">Avancé</span>
+                    <span class="tab-text">Paramètre</span>
                 </button>
             </nav>
 
@@ -177,7 +298,7 @@ $autoSave = new AutoSaveManager('whatsapp.xml');
                             <div class='contact-card modern' data-contact-name='$fullName' role='listitem'>
                                 <div class='card-header'>
                                     <div class='avatar-container'>
-                                        <img src='$photo' alt='Photo de profil de $fullName' class='contact-avatar' onerror=\"this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNFNUU3RUIiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSIjOUM5Qzk5Ii8+CjxwYXRoIGQ9Ik0xMiAxNEM5LjMzIDEzLjk5IDcuMDEgMTUuNjIgNi4yMiAxOC4wNEM2LjA5IDE4LjQ2IDYuNDEgMTguODggNi44NiAxOC44OEgxNy4xNEMxNy41OSAxOC44OCAxNy45MSAxOC40NiAxNy43OCAxOC4wNEMxNi45OSAxNS42MiAxNC42NyAxMy45OSAxMiAxNFoiIGZpbGw9IiM5QzlDOTkiLz4KPC9zdmc+Cjwvc3ZnPgo='\">
+                                        <img src='$photo' alt='Photo de profil de $fullName' class='contact-avatar' onerror=\"this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNFNUU3RUIiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSIjOUM5Qzk5Ii8+CjxwYXRoIGQ9Ik0xMiAxNEM5LjMzIDEzLjk5IDcuMDEgMTUuNjIgNi4yMiAxOC4wNEM2LjA5IDE4LjQ2IDYuNDEgMTguODggNi44NiAxOC84OEgxNy4xNEMxNy41OSAxOC44OCAxNy45MSAxOC40NiAxNy43OCAxOC4wNEMxNi45OSAxNS42MiAxNC42NyAxMy45OSAxMiAxNFoiIGZpbGw9IiM5QzlDOTkiLz4KPC9zdmc+Cjwvc3ZnPgo='\">
                                         <div class='status-dot $statusClass' aria-label='Statut $status'></div>
                                     </div>
                                     <div class='contact-info'>
@@ -248,14 +369,16 @@ $autoSave = new AutoSaveManager('whatsapp.xml');
                             <div class='group-card modern' data-group-name='$nomGroupe' role='listitem'>
                                 <div class='card-header'>
                                     <div class='avatar-container'>
-                                        <img src='$photo' alt='Photo du groupe $nomGroupe' class='group-avatar' onerror=\"this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNFNUU3RUIiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE2IDRDMTcuMSA0IDE4IDQuOSAxOCA2VjE4QzE4IDE5LjEgMTcuMSAyMCAxNiAyMEg0QzIuOSAyMCAyIDE5LjEgMiAxOFY2QzIgNC45IDIuOSA0IDQgNEgxNlpNMTYgNkg0VjE4SDE2VjZaTTggOEgxNFYxMEg4VjhaTTggMTJIMTRWMTRIOFYxMloiIGZpbGw9IiM5QzlDOTkiLz4KPC9zdmc+Cjwvc3ZnPgo='\">
+                                        <img src='$photo' alt='Photo du groupe $nomGroupe' class='group-avatar' onerror=\"this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNFNUU3RUIiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1lbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE2IDRDMTcuMSA0IDE4IDQuOSAxOCA2VjE4QzE4IDE5LjEgMTcuMSAyMCAxNiAyMEg0QzIuOSAyMCAyIDE5LjEgMiAxOFY2QzIgNC45IDIuOSA0IDQgNEgxNlpNMTYgNkg0VjE4SDE2VjZaTTggOEgxNFYxMEg8VjhaTTggMTJIMTRWMTRIOFYxMloiIGZpbGw9IiM9QzlDOTkiLz4KPC9zdmc+Cjwvc3ZnPgo='\">
                                         <div class='group-badge'>$membersCount</div>
                                     </div>
                                     <div class='group-info'>
-                                        <h4 class='group-name'>$nomGroupe</h4>
                                         <p class='group-members'>👥 $membersCount membres</p>
                                         <span class='group-admin'>👑 Admin: $adminName</span>
                                     </div>
+                                </div>
+                                <div class='group-name-container'>
+                                    <h4 class='group-name'>$nomGroupe</h4>
                                 </div>
                                 <div class='card-actions'>
                                     <button onclick='editGroup($groupeId)' class='action-btn edit' title='Modifier le groupe' aria-label='Modifier $nomGroupe'>
@@ -274,61 +397,8 @@ $autoSave = new AutoSaveManager('whatsapp.xml');
                     </div>
                 </section>
 
-                <!-- Onglet Sauvegarde -->
-                <section id="backup-tab" class="tab-panel" role="tabpanel" aria-labelledby="backup">
-                    <header class="panel-header">
-                        <h3>💾 Gestion des sauvegardes</h3>
-                    </header>
-                    
-                    <div class="backup-section">
-                        <div class="backup-controls">
-                            <button onclick="createBackup()" class="modern-btn success" aria-label="Créer une nouvelle sauvegarde">
-                                <span>💾</span> Créer une sauvegarde
-                            </button>
-                            <button onclick="loadBackupList()" class="modern-btn secondary" aria-label="Actualiser la liste des sauvegardes">
-                                <span>🔄</span> Actualiser
-                            </button>
-                        </div>
-                        
-                        <div class="backup-status modern" id="backup-status" role="status">
-                            <div class="status-icon">⏰</div>
-                            <div class="status-info">
-                                <p><strong>Dernière sauvegarde automatique:</strong></p>
-                                <span id="last-backup">Chargement...</span>
-                            </div>
-                        </div>
-                        
-                        <div class="backup-list modern" id="backup-list" role="list">
-                            <!-- Sera rempli par JavaScript -->
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Onglet Historique -->
-                <section id="history-tab" class="tab-panel" role="tabpanel" aria-labelledby="history">
-                    <header class="panel-header">
-                        <h3>📋 Historique des actions</h3>
-                        <div class="panel-actions">
-                            <select id="history-filter" onchange="filterHistory()" class="modern-select" aria-label="Filtrer l'historique des actions">
-                                <option value="">Toutes les actions</option>
-                                <option value="send_message">Messages envoyés</option>
-                                <option value="add_contact">Contacts ajoutés</option>
-                                <option value="create_group">Groupes créés</option>
-                                <option value="update_contact">Contacts modifiés</option>
-                            </select>
-                            <button onclick="clearHistory()" class="modern-btn danger" aria-label="Vider l'historique">
-                                <span>🗑️</span> Vider l'historique
-                            </button>
-                        </div>
-                    </header>
-                    
-                    <div class="history-container" id="history-list" role="list">
-                        <!-- Sera rempli par JavaScript -->
-                    </div>
-                </section>
-
-                <!-- Onglet Avancé -->
-                <section id="advanced-tab" class="tab-panel" role="tabpanel" aria-labelledby="advanced">
+                <!-- Onglet Paramètre -->
+                <section id="parameter-tab" class="tab-panel" role="tabpanel" aria-labelledby="parameter">
                     <header class="panel-header">
                         <h3>🔧 Paramètres avancés</h3>
                     </header>
@@ -346,47 +416,6 @@ $autoSave = new AutoSaveManager('whatsapp.xml');
                                 </label>
                             </div>
                         </div>
-                        
-                        <div class="setting-card">
-                            <div class="setting-header">
-                                <h4>💾 Sauvegarde automatique</h4>
-                            </div>
-                            <div class="setting-content">
-                                <label class="modern-switch">
-                                    <input type="checkbox" id="auto-save-enabled" checked aria-label="Activer ou désactiver la sauvegarde automatique">
-                                    <span class="switch-slider"></span>
-                                    <span class="switch-label">Sauvegarde automatique (toutes les 5 minutes)</span>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <div class="setting-card">
-                            <div class="setting-header">
-                                <h4>✅ Validation XML</h4>
-                            </div>
-                            <div class="setting-content">
-                                <button onclick="validateXML()" class="modern-btn info" aria-label="Valider le fichier XML">
-                                    <span>🔍</span> Valider le fichier XML
-                                </button>
-                                <div id="validation-result" class="validation-result" role="alert"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="setting-card">
-                            <div class="setting-header">
-                                <h4>🛠️ Maintenance</h4>
-                            </div>
-                            <div class="setting-content">
-                                <div class="maintenance-actions">
-                                    <button onclick="optimizeXML()" class="modern-btn warning" aria-label="Optimiser le fichier XML">
-                                        <span>⚡</span> Optimiser XML
-                                    </button>
-                                    <button onclick="exportData()" class="modern-btn info" aria-label="Exporter les données">
-                                        <span>📤</span> Exporter données
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </section>
             </div>
@@ -396,8 +425,6 @@ $autoSave = new AutoSaveManager('whatsapp.xml');
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         initializeSettings();
-        loadBackupList();
-        loadHistory();
         initializeSearch();
         initializeTabNavigation();
     });
@@ -405,23 +432,15 @@ $autoSave = new AutoSaveManager('whatsapp.xml');
     function initializeSettings() {
         // Charger les préférences sauvegardées
         const notificationsEnabled = localStorage.getItem('notifications-enabled') !== 'false';
-        const autoSaveEnabled = localStorage.getItem('auto-save-enabled') !== 'false';
         
         const notificationsCheckbox = document.getElementById('notifications-enabled');
-        const autoSaveCheckbox = document.getElementById('auto-save-enabled');
         
         notificationsCheckbox.checked = notificationsEnabled;
-        autoSaveCheckbox.checked = autoSaveEnabled;
         
         // Écouter les changements
         notificationsCheckbox.addEventListener('change', function() {
             localStorage.setItem('notifications-enabled', this.checked);
             showNotification(this.checked ? 'Notifications activées' : 'Notifications désactivées', this.checked ? 'success' : 'info');
-        });
-        
-        autoSaveCheckbox.addEventListener('change', function() {
-            localStorage.setItem('auto-save-enabled', this.checked);
-            showNotification(this.checked ? 'Sauvegarde automatique activée' : 'Sauvegarde automatique désactivée', this.checked ? 'success' : 'info');
         });
     }
 
@@ -481,7 +500,7 @@ $autoSave = new AutoSaveManager('whatsapp.xml');
             
             contacts.forEach(contact => {
                 const name = contact.dataset.contactName.toLowerCase();
-                contact.style.display = name.includes(query) ? 'grid' : 'none';
+                contact.style.display = name.includes(query) ? 'flex' : 'none';
             });
         });
         
@@ -491,7 +510,7 @@ $autoSave = new AutoSaveManager('whatsapp.xml');
             
             groups.forEach(group => {
                 const name = group.dataset.groupName.toLowerCase();
-                group.style.display = name.includes(query) ? 'grid' : 'none';
+                group.style.display = name.includes(query) ? 'flex' : 'none';
             });
         });
     }
@@ -558,223 +577,7 @@ $autoSave = new AutoSaveManager('whatsapp.xml');
         window.location.href = `index.php?group=${groupId}`;
     }
 
-    // Fonctions de sauvegarde
-    async function createBackup() {
-        try {
-            const response = await fetch('auto_save.php?action=create_backup');
-            const result = await response.json();
-            
-            if (result.success) {
-                showNotification('Sauvegarde créée avec succès', 'success');
-                loadBackupList();
-            } else {
-                showNotification('Erreur lors de la sauvegarde', 'error');
-            }
-        } catch (error) {
-            showNotification('Erreur de connexion', 'error');
-        }
-    }
-
-    async function loadBackupList() {
-        try {
-            const response = await fetch('auto_save.php?action=get_backups');
-            const backups = await response.json();
-            
-            const backupList = document.getElementById('backup-list');
-            
-            if (backups.length > 0) {
-                let html = '<h4>Sauvegardes disponibles</h4><ul class="backup-items" role="list">';
-                backups.forEach(backup => {
-                    html += `
-                        <li class="backup-item" role="listitem">
-                            <div class="backup-info">
-                                <strong>${backup.filename}</strong>
-                                <small>${backup.created_formatted}</small>
-                                <span class="backup-size">${formatFileSize(backup.size)}</span>
-                            </div>
-                            <div class="backup-actions">
-                                <button onclick="restoreBackup('${backup.filepath}')" class="action-btn restore" aria-label="Restaurer la sauvegarde ${backup.filename}">Restaurer</button>
-                                <button onclick="downloadBackup('${backup.filepath}')" class="action-btn download" aria-label="Télécharger la sauvegarde ${backup.filename}">Télécharger</button>
-                            </div>
-                        </li>
-                    `;
-                });
-                html += '</ul>';
-                backupList.innerHTML = html;
-                
-                document.getElementById('last-backup').textContent = backups[0].created_formatted;
-            } else {
-                backupList.innerHTML = '<p>Aucune sauvegarde disponible</p>';
-            }
-        } catch (error) {
-            console.error('Erreur chargement sauvegardes:', error);
-            showNotification('Erreur lors du chargement des sauvegardes', 'error');
-        }
-    }
-
-    async function restoreBackup(backupFile) {
-        if (confirm('Êtes-vous sûr de vouloir restaurer cette sauvegarde ? Cela remplacera les données actuelles.')) {
-            try {
-                const response = await fetch(`auto_save.php?action=restore_backup&backup_file=${encodeURIComponent(backupFile)}`);
-                const result = await response.json();
-                
-                if (result.success) {
-                    showNotification('Sauvegarde restaurée avec succès', 'success');
-                    setTimeout(() => location.reload(), 2000);
-                } else {
-                    showNotification('Erreur lors de la restauration', 'error');
-                }
-            } catch (error) {
-                showNotification('Erreur de connexion', 'error');
-            }
-        }
-    }
-
-    function downloadBackup(backupFile) {
-        window.open(backupFile, '_blank');
-    }
-
-    // Fonctions d'historique
-    async function loadHistory() {
-        try {
-            const response = await fetch('history.php?action=get_history&limit=50');
-            const history = await response.json();
-            
-            const historyList = document.getElementById('history-list');
-            
-            if (history.length > 0) {
-                let html = '<ul class="history-items" role="list">';
-                history.forEach(entry => {
-                    const actionIcon = getActionIcon(entry.action);
-                    html += `
-                        <li class="history-item" data-action="${entry.action}" role="listitem">
-                            <div class="history-icon">${actionIcon}</div>
-                            <div class="history-info">
-                                <strong>${getActionLabel(entry.action)}</strong>
-                                <p>${entry.details}</p>
-                                <small>${new Date(entry.timestamp).toLocaleString('fr-FR')}</small>
-                            </div>
-                        </li>
-                    `;
-                });
-                html += '</ul>';
-                historyList.innerHTML = html;
-            } else {
-                historyList.innerHTML = '<p>Aucun historique disponible</p>';
-            }
-        } catch (error) {
-            console.error('Erreur chargement historique:', error);
-            showNotification('Erreur lors du chargement de l\'historique', 'error');
-        }
-    }
-
-    function filterHistory() {
-        const filter = document.getElementById('history-filter').value;
-        const items = document.querySelectorAll('.history-item');
-        
-        items.forEach(item => {
-            item.style.display = (!filter || item.dataset.action === filter) ? 'flex' : 'none';
-        });
-    }
-
-    async function clearHistory() {
-        if (confirm('Êtes-vous sûr de vouloir vider l\'historique ?')) {
-            try {
-                const response = await fetch('history.php?action=clear_history');
-                const result = await response.json();
-                
-                if (result.success) {
-                    showNotification('Historique vidé', 'success');
-                    loadHistory();
-                } else {
-                    showNotification('Erreur lors du vidage', 'error');
-                }
-            } catch (error) {
-                showNotification('Erreur de connexion', 'error');
-            }
-        }
-    }
-
-    // Fonctions avancées
-    async function validateXML() {
-        try {
-            const response = await fetch('validation.php?action=validate');
-            const result = await response.json();
-            
-            const validationResult = document.getElementById('validation-result');
-            
-            if (result.valid) {
-                validationResult.innerHTML = '<p class="success">✅ Fichier XML valide</p>';
-            } else {
-                let html = '<p class="error">❌ Erreurs de validation:</p><ul>';
-                result.errors.forEach(error => {
-                    html += `<li>${error}</li>`;
-                });
-                html += '</ul>';
-                validationResult.innerHTML = html;
-            }
-        } catch (error) {
-            document.getElementById('validation-result').innerHTML = '<p class="error">Erreur lors de la validation</p>';
-            showNotification('Erreur lors de la validation XML', 'error');
-        }
-    }
-
-    function optimizeXML() {
-        if (confirm('Optimiser le fichier XML ? Cela peut prendre quelques secondes.')) {
-            showNotification('Optimisation en cours...', 'info');
-            fetch('optimize.php?action=optimize_xml')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showNotification('XML optimisé avec succès', 'success');
-                    } else {
-                        showNotification('Erreur lors de l\'optimisation', 'error');
-                    }
-                })
-                .catch(error => {
-                    showNotification('Erreur de connexion', 'error');
-                });
-        }
-    }
-
-    function exportData() {
-        window.open('export.php', '_blank');
-        showNotification('Exportation des données initiée', 'info');
-    }
-
     // Fonctions utilitaires
-    function getActionIcon(action) {
-        const icons = {
-            'send_message': '💬',
-            'add_contact': '👤',
-            'create_group': '👥',
-            'update_contact': '✏️',
-            'delete_contact': '🗑️',
-            'switch_conversation': '🔄'
-        };
-        return icons[action] || '📝';
-    }
-
-    function getActionLabel(action) {
-        const labels = {
-            'send_message': 'Message envoyé',
-            'add_contact': 'Contact ajouté',
-            'create_group': 'Groupe créé',
-            'update_contact': 'Contact modifié',
-            'delete_contact': 'Contact supprimé',
-            'switch_conversation': 'Conversation changée'
-        };
-        return labels[action] || action;
-    }
-
-    function formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
-
     function showNotification(message, type) {
         const notification = document.createElement('div');
         notification.className = `toast-notification ${type}`;

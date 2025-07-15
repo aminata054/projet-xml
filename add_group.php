@@ -7,6 +7,25 @@
     <title>Créer un groupe</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="enhanced_style.css">
+    <style>
+        /* Ajout de styles inline pour rendre le formulaire carré avec une taille augmentée */
+        .chat-container {
+            width: 700px; /* Augmentation de la largeur pour un carré plus grand */
+            height: 700px; /* Hauteur ajustée pour égaler la largeur, créant un carré */
+            overflow-y: auto; /* Permet de scroller si le contenu dépasse */
+            padding: 20px; /* Conservé pour un espacement adéquat */
+        }
+        /* Ajustement du formulaire pour s'adapter au conteneur carré */
+        .profile-form {
+            max-height: 70%; /* Limite la hauteur du formulaire pour laisser de l'espace */
+            overflow-y: auto; /* Permet de scroller si nécessaire */
+        }
+        /* Ajustement des sections pour éviter le débordement */
+        .search-members, .recent-groups {
+            max-height: 20%; /* Limite la hauteur des sections */
+            overflow-y: auto; /* Permet de scroller si nécessaire */
+        }
+    </style>
 </head>
 
 <body>
