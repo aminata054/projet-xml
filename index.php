@@ -76,7 +76,7 @@ if ($xml === false) {
         <!-- Fenêtre de chat -->
         <main class="chat-app">
             <div class="chat-header">
-                <img src="images/default.jpg" alt="Avatar">
+                <img src="images/image.png" alt="Avatar">
                 <div class="contact-info">
                     <h3>Sélectionnez une discussion</h3>
                     <p>En ligne</p>

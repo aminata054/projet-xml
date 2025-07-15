@@ -7,7 +7,7 @@
         <nom>Diagne</nom>
         <prenom>Yacine fall</prenom>
         <numero_telephone>77123456789</numero_telephone>
-        <photo_profile>images/contact_1_1752600097.jpg</photo_profile>
+        <photo_profile>images/68702812d3559-Capture d'écran 2025-06-08 233650.png</photo_profile>
         <status>Hors ligne</status>
         <messages>
           <message id="1" type="texte" expediteur="1" destinataire="2">
@@ -63,7 +63,7 @@
         <nom>Cruz</nom>
         <prenom>Zahra</prenom>
         <numero_telephone>771234567</numero_telephone>
-        <photo_profile>images/contact_4_1752600164.jpg</photo_profile>
+        <photo_profile>images/image.png</photo_profile>
         <status>Hors ligne</status>
         <messages/>
       </contact>
