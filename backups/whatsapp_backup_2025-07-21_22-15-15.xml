@@ -25,7 +25,6 @@
           </message>
         </messages>
       </contact>
-      
       <contact id="2">
         <nom>Sylla</nom>
         <prenom>Dié</prenom>
@@ -44,10 +43,9 @@
           </message>
         </messages>
       </contact>
-      
       <contact id="3">
-        <nom>Ba</nom>
-        <prenom>Marie</prenom>
+        <nom>Dieng</nom>
+        <prenom>Souhaibou</prenom>
         <numero_telephone>4225485</numero_telephone>
         <photo_profile>images/image.png</photo_profile>
         <status>En ligne</status>
@@ -58,7 +56,6 @@
           </message>
         </messages>
       </contact>
-      
       <contact id="4">
         <nom>Cruz</nom>
         <prenom>Zahra</prenom>
@@ -67,7 +64,6 @@
         <status>Hors ligne</status>
         <messages/>
       </contact>
-      
       <contact id="5">
         <nom>Sané</nom>
         <prenom>Alioune</prenom>
@@ -76,7 +72,6 @@
         <status>En ligne</status>
         <messages/>
       </contact>
-      
       <contact id="6">
         <nom>Gueye</nom>
         <prenom>Assane</prenom>
@@ -85,29 +80,32 @@
         <status>Hors ligne</status>
         <messages/>
       </contact>
+      <contact id="7">
+        <nom>Sow</nom>
+        <prenom>Tidiane</prenom>
+        <numero_telephone>123456789</numero_telephone>
+        <photo_profile>images/tidiane.jpg</photo_profile>
+        <status>En ligne</status>
+        <messages/>
+      </contact>
+      <contact id="8">
+        <nom>Sané</nom>
+        <prenom>Alioune</prenom>
+        <numero_telephone>987654321</numero_telephone>
+        <photo_profile>images/alioune.jpg</photo_profile>
+        <status>Hors ligne</status>
+        <messages/>
+      </contact>
     </contacts>
-    
     <groupes>
       <groupe id="1">
         <nom_groupe>Projet XML</nom_groupe>
         <photo_groupe>images/groupe.png</photo_groupe>
-        <membres>
-          <contact id="1">
-            <nom>Sow</nom>
-            <prenom>Tidiane</prenom>
-            <numero_telephone>123456789</numero_telephone>
-            <photo_profile>tidiane.jpg</photo_profile>
-            <status>En ligne</status>
-          </contact>
-          <contact id="2">
-            <nom>Sané</nom>
-            <prenom>Alioune</prenom>
-            <numero_telephone>987654321</numero_telephone>
-            <photo_profile>alioune.jpg</photo_profile>
-            <status>Hors ligne</status>
-          </contact>
-        </membres>
         <admin ref="1"/>
+        <membres>
+          <membre ref="7"/>
+          <membre ref="8"/>
+        </membres>
         <messages>
           <message id="5" type="texte" expediteur="1">
             <contenu>Salut tout le monde!</contenu>

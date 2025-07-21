@@ -1,20 +1,23 @@
 <!ELEMENT whatsapp (discussions)>
+<!ELEMENT discussions (contacts, groupes)>
 <!ELEMENT contacts (contact*)>
-<!ELEMENT contact (nom, prenom, numero_telephone, photo_profile, status,messages?)>
+<!ELEMENT contact (prenom, nom, numero_telephone, photo_profile, status, messages?)>
 <!ATTLIST contact id NMTOKEN #REQUIRED>
-<!ELEMENT nom (#PCDATA)>
 <!ELEMENT prenom (#PCDATA)>
+<!ELEMENT nom (#PCDATA)>
 <!ELEMENT numero_telephone (#PCDATA)>
 <!ELEMENT photo_profile (#PCDATA)>
 <!ELEMENT status (#PCDATA)>
 <!ELEMENT groupes (groupe*)>
-<!ELEMENT groupe (nom_groupe, photo_groupe, membres, admin, messages?)>
+<!ELEMENT groupe (nom_groupe, photo_groupe, admin, membres, messages?)>
 <!ATTLIST groupe id NMTOKEN #REQUIRED>
 <!ELEMENT nom_groupe (#PCDATA)>
-<!ELEMENT membres (contact+)>
-<!ELEMENT admin (#PCDATA)>
+<!ELEMENT photo_groupe (#PCDATA)>
+<!ELEMENT admin EMPTY>
 <!ATTLIST admin ref NMTOKEN #REQUIRED>
-<!ELEMENT discussions (contacts, groupes)>
+<!ELEMENT membres (membre*)>
+<!ELEMENT membre EMPTY>
+<!ATTLIST membre ref NMTOKEN #REQUIRED>
 <!ELEMENT messages (message*)>
 <!ELEMENT message (contenu, cite?, tag?, message_info)>
 <!ATTLIST message
@@ -22,11 +25,11 @@
     type (texte|vocal|fichier) #REQUIRED
     expediteur NMTOKEN #REQUIRED
     destinataire NMTOKEN #IMPLIED>
-<!ELEMENT message_info (#PCDATA)>
-<!ATTLIST message_info
-    heure CDATA #REQUIRED
-    statut CDATA #IMPLIED>
 <!ELEMENT contenu (#PCDATA)>
 <!ELEMENT cite (#PCDATA)>
 <!ATTLIST cite ref NMTOKEN #IMPLIED>
 <!ELEMENT tag (#PCDATA)>
+<!ELEMENT message_info EMPTY>
+<!ATTLIST message_info
+    heure CDATA #REQUIRED
+    statut CDATA #IMPLIED>

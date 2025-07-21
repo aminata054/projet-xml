@@ -1,41 +1,211 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajouter un contact - WhatsApp Web</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="enhanced_style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Ajout de styles inline pour rendre le formulaire carré avec une taille augmentée */
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
         .chat-container {
-            width: 600px; /* Augmentation de la largeur à 600px */
-            height: 600px; /* Hauteur ajustée pour égaler la largeur, créant un carré plus grand */
-            overflow-y: auto; /* Permet de scroller si le contenu dépasse */
-            padding: 20px; /* Conservé pour un espacement adéquat */
+            width: 600px;
+            height: 600px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            padding: 20px;
         }
-        /* Ajustement du formulaire pour s'adapter au conteneur carré */
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #075e54;
+            color: #fff;
+            border-radius: 10px 10px 0 0;
+        }
+        .form-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .back-button {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2em;
+            transition: opacity 0.3s;
+        }
+        .back-button:hover {
+            opacity: 0.8;
+        }
         .profile-form {
-            max-height: 70%; /* Limite la hauteur du formulaire pour laisser de l'espace */
-            overflow-y: auto; /* Permet de scroller si nécessaire */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
-        /* Ajustement des sections pour éviter le débordement */
-        .search-container, .recent-contacts {
-            max-height: 20%; /* Limite la hauteur des sections */
-            overflow-y: auto; /* Permet de scroller si nécessaire */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .formogyan
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+        }
+        .form-input, .form-file {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        .form-input:focus, .form-file:focus {
+            outline: none;
+            border-color: #25d366;
+        }
+        .form-input.error {
+            border-color: #e53935;
+        }
+        .form-input.valid {
+            border-color: #25d366;
+        }
+        .error-message {
+            color: #e53935;
+            font-size: 0.85em;
+            min-height: 20px;
+        }
+        .file-preview {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        .preview-img {
+            max-width: 100px;
+            border-radius: 50%;
+        }
+        .remove-preview {
+            background: #e53935;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .sidebar-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        .sidebar-button.primary {
+            background: #25d366;
+            color: #fff;
+        }
+        .sidebar-button.primary:hover {
+            background: #20b058;
+        }
+        .sidebar-button.secondary {
+            background: #eceff1;
+            color: #333;
+        }
+        .sidebar-button.secondary:hover {
+            background: #dfe3e6;
+        }
+        .btn-loading {
+            display: none;
+        }
+        .btn-loading.loading {
+            display: inline;
+        }
+        .search-container {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .search-results {
+            margin-top: 10px;
+        }
+        .search-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        .contact-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .recent-contacts {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .recent-contact-item {
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            color: #fff;
+            transition: opacity 0.3s;
+        }
+        .toast-notification.success {
+            background: #25d366;
+        }
+        .toast-notification.error {
+            background: #e53935;
+        }
+        .toast-notification.show {
+            opacity: 1;
         }
     </style>
 </head>
-
 <body>
     <div class="container chat-container" role="main">
         <div class="form-header">
-            <h2 aria-label="Ajouter un nouveau contact">➕ Ajouter un contact</h2>
-            <a href="index.php" class="back-button sidebar-button" aria-label="Retour à la page principale">← Retour</a>
+            <h2 aria-label="Ajouter un nouveau contact"><i class="fas fa-user-plus"></i> Ajouter un contact</h2>
+            <a href="index.php" class="back-button sidebar-button" aria-label="Retour à la page principale"><i class="fas fa-arrow-left"></i></a>
         </div>
         
-        <!-- Barre de recherche pour vérifier les doublons -->
         <div class="search-container" role="search">
             <label for="contact-search" class="visually-hidden">Rechercher un contact existant</label>
             <input type="text" id="contact-search" placeholder="🔍 Rechercher un contact..." class="search-input form-input" aria-describedby="search-hint">
@@ -100,7 +270,6 @@
             </div>
         </form>
         
-        <!-- Historique des contacts récents -->
         <div class="recent-contacts" role="region" aria-label="Contacts récemment ajoutés">
             <h3>Contacts récemment ajoutés</h3>
             <div id="recent-contacts-list" role="list"></div>
@@ -119,7 +288,6 @@
         const photoInput = document.getElementById('photo');
         const photoPreview = document.getElementById('photo-preview');
         
-        // Validation en temps réel
         const inputs = form.querySelectorAll('input[required]');
         inputs.forEach(input => {
             input.addEventListener('input', validateField);
@@ -127,7 +295,6 @@
             input.addEventListener('input', clearError);
         });
         
-        // Prévisualisation de la photo
         photoInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -151,7 +318,6 @@
             }
         });
         
-        // Soumission du formulaire
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             if (validateForm()) {
@@ -159,7 +325,6 @@
             }
         });
 
-        // Accessibilité pour la navigation au clavier
         form.querySelectorAll('input, select, button').forEach(element => {
             element.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' && this.tagName !== 'BUTTON') {
@@ -254,6 +419,10 @@
                 body: formData
             });
             
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
+            }
+            
             const result = await response.json();
             
             if (result.success) {
@@ -266,7 +435,7 @@
                 showNotification(result.message || 'Erreur lors de l\'ajout du contact', 'error');
             }
         } catch (error) {
-            showNotification('Erreur de connexion lors de l\'ajout du contact', 'error');
+            showNotification('Erreur: ' + error.message, 'error');
             console.error('Erreur:', error);
         } finally {
             btnText.classList.remove('hidden');
@@ -315,7 +484,7 @@
                 contacts.forEach(contact => {
                     html += `
                         <div class="search-item existing-contact" role="listitem">
-                            <img src="${contact.photo || 'images/default-avatar.png'}" alt="Photo de profil de ${contact.prenom} ${contact.nom}" class="contact-avatar">
+                            <img src="${contact.photo || 'images/default-avatar.png'}" alt="Photo de ${contact.prenom} ${contact.nom}" class="contact-avatar">
                             <div class="search-item-info">
                                 <span class="contact-name">${contact.prenom} ${contact.nom}</span>
                                 <small class="duplicate-warning">⚠️ Contact déjà existant</small>
@@ -331,8 +500,8 @@
                 searchResults.classList.remove('hidden');
             }
         } catch (error) {
-            console.error('Erreur de recherche:', error);
-            showNotification('Erreur lors de la recherche de contacts', 'error');
+            console.error('Erreur recherche:', error);
+            showNotification('Erreur recherche contacts', 'error');
         }
     }
 
@@ -359,8 +528,8 @@
                 recentList.innerHTML = '<p class="no-recent">Aucun contact récent</p>';
             }
         } catch (error) {
-            console.error('Erreur chargement historique:', error);
-            showNotification('Erreur lors du chargement des contacts récents', 'error');
+            console.error('Erreur historique:', error);
+            showNotification('Erreur chargement contacts récents', 'error');
         }
     }
 
@@ -373,7 +542,6 @@
         
         document.body.appendChild(notification);
         setTimeout(() => notification.classList.add('show'), 100);
-        
         setTimeout(() => {
             notification.classList.remove('show');
             setTimeout(() => notification.remove(), 300);
@@ -391,7 +559,7 @@
             });
         } catch (error) {
             console.error('Erreur log:', error);
-            showNotification('Erreur lors de l\'enregistrement de l\'action', 'error');
+            showNotification('Erreur enregistrement action', 'error');
         }
     }
     </script>
