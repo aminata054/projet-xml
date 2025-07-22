@@ -1,11 +1,11 @@
 <?php
-// Enable libxml error handling
+// Activer la gestion des erreurs libxml
 libxml_use_internal_errors(true);
 
 // Charger le fichier XML
 $xml = simplexml_load_file('whatsapp.xml');
 if ($xml === false) {
-    echo "Erreur lors du chargement du fichier XML:<br>";
+    echo "Erreur chargement XML:<br>";
     foreach (libxml_get_errors() as $error) {
         echo $error->message . " at line " . $error->line . "<br>";
     }
@@ -25,7 +25,6 @@ if ($xml === false) {
 
 <body>
     <div class="app-container">
-        <!-- Sidebar gauche -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 <h2>Discussions</h2>
@@ -52,6 +51,9 @@ if ($xml === false) {
                 }
 
                 // Afficher les groupes
+                if (!$xml->discussions->groupes->groupe) {
+                    echo "<p>Aucun groupe trouvé</p>";
+                }
                 foreach ($xml->discussions->groupes->groupe as $groupe) {
                     $groupeId = (string)$groupe['id'];
                     $nomGroupe = (string)$groupe->nom_groupe;
@@ -70,10 +72,10 @@ if ($xml === false) {
             </div>
             <div class="sidebar-footer">
                 <a href="add_contact.php" class="sidebar-button">Ajouter un contact</a>
+                <a href="add_group.php" class="sidebar-button">Créer un groupe</a>
             </div>
         </aside>
 
-        <!-- Fenêtre de chat -->
         <main class="chat-app">
             <div class="chat-header">
                 <img src="images/image.png" alt="Avatar">
@@ -99,7 +101,6 @@ if ($xml === false) {
             </form>
         </main>
 
-        <!-- Sidebar droite -->
         <aside class="right-sidebar">
             <div class="right-sidebar-header">
                 <h2>Paramètres</h2>
@@ -114,7 +115,6 @@ if ($xml === false) {
     </div>
 
     <script>
-    // Définir les objets messages, contacts et groupes pour script.js
     window.messages = <?php
         $jsMessages = [];
         foreach ($xml->discussions->contacts->contact as $contact) {
@@ -176,13 +176,15 @@ if ($xml === false) {
             $membreIds = [];
             foreach ($groupe->membres->membre as $membre) {
                 $membreId = (string)$membre['ref'];
-                $membreContact = $xml->xpath("//contact[@id='$membreId']")[0];
-                $membres[] = (string)$membreContact->prenom . ' ' . (string)$membreContact->nom;
-                $membreIds[] = $membreId;
+                $membreContact = $xml->xpath("//contact[@id='$membreId']")[0] ?? null;
+                if ($membreContact) {
+                    $membres[] = (string)$membreContact->prenom . ' ' . (string)$membreContact->nom;
+                    $membreIds[] = $membreId;
+                }
             }
             $adminId = (string)$groupe->admin['ref'];
-            $adminContact = $xml->xpath("//contact[@id='$adminId']")[0];
-            $adminName = (string)$adminContact->prenom . ' ' . (string)$adminContact->nom;
+            $adminContact = $xml->xpath("//contact[@id='$adminId']")[0] ?? null;
+            $adminName = $adminContact ? (string)$adminContact->prenom . ' ' . (string)$adminContact->nom : 'Admin inconnu';
             $jsGroupes["groupe-$groupeId"] = [
                 'nom_groupe' => (string)$groupe->nom_groupe,
                 'photo_groupe' => !empty($groupe->photo_groupe) && file_exists((string)$groupe->photo_groupe) ? (string)$groupe->photo_groupe : 'images/group.png',
@@ -204,7 +206,6 @@ if ($xml === false) {
         echo json_encode($allContacts);
     ?>;
 
-    // Log pour débogage
     console.log('Contacts:', window.contacts);
     console.log('Groupes:', window.groupes);
     console.log('All Contacts:', window.allContacts);

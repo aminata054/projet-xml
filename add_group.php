@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Créer un groupe</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="enhanced_style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
     /* Ajout de styles inline pour rendre le formulaire carré avec une taille augmentée */
     .chat-container {
@@ -42,8 +41,8 @@
 <body>
     <div class="container chat-container">
         <div class="form-header">
-            <h2>Créer un groupe</h2>
-            <a href="index.php" class="back-button">← Retour</a>
+            <h2><i class="fas fa-users"></i> Créer un groupe</h2>
+            <a href="index.php" class="back-button"><i class="fas fa-arrow-left"></i></a>
         </div>
 
         <form method="post" action="add.php" enctype="multipart/form-data" class="profile-form" id="create-group-form">
@@ -78,7 +77,6 @@
                         <input type="text" id="member-search" placeholder="Rechercher des contacts..."
                             class="search-input">
                     </div>
-
                     <div class="available-contacts">
                         <h4>Contacts disponibles</h4>
                         <div class="contacts-list" id="available-contacts-list">
@@ -97,13 +95,12 @@
                             ?>
                         </div>
                     </div>
-
                     <div class="selected-members">
                         <h4>Membres sélectionnés (<span id="member-count">0</span>)</h4>
                         <div class="selected-list" id="selected-members-list">
                             <p class="no-members">Aucun membre sélectionné</p>
                         </div>
-                    </div </div>
+                    </div>
                     <div class="error-message" id="membres-error"></div>
                     <small class="form-help">Sélectionnez au moins 2 membres pour créer un groupe</small>
                 </div>
@@ -127,9 +124,7 @@
         <!-- Groupes récents -->
         <div class="recent-groups">
             <h3>Groupes récemment créés</h3>
-            <div id="recent-groups-list">
-                <!-- Sera rempli par JavaScript -->
-            </div>
+            <div id="recent-groups-list"></div>
         </div>
     </div>
 
@@ -159,7 +154,7 @@
             const file = e.target.files[0];
             if (file) {
                 if (file.size > 2 * 1024 * 1024) {
-                    alert('La taille du fichier ne doit pas dépasser 2MB');
+                    showNotification('La taille du fichier ne doit pas dépasser 2MB', 'error');
                     this.value = '';
                     return;
                 }
@@ -167,7 +162,7 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     photoPreview.innerHTML = `
-                        <img src="${e.target.result}" alt="Prévisualisation" class="preview-img">
+                        <img src="${e.target.result}" alt="Prévisualisation" class="preview-img" style="max-width: 100px; border-radius: 50%;">
                         <button type="button" onclick="clearPhotoPreview()" class="remove-preview">×</button>
                     `;
                 };
@@ -203,13 +198,11 @@
         const indicator = element.querySelector('.selection-indicator');
 
         if (selectedMembers.has(contactId)) {
-            // Désélectionner
             selectedMembers.delete(contactId);
             element.classList.remove('selected');
             indicator.textContent = '+';
             removeMemberFromSelected(contactId);
         } else {
-            // Sélectionner
             selectedMembers.add(contactId);
             element.classList.add('selected');
             indicator.textContent = '−';
@@ -266,7 +259,6 @@
     }
 
     function updateMembersInput() {
-        // Supprimer les anciens inputs cachés
         const oldInputs = document.querySelectorAll('input[name="membres[]"]');
         oldInputs.forEach(input => input.remove());
 
@@ -302,7 +294,6 @@
 
         return isValid;
     }
-
 
 
     function resetForm() {
@@ -345,7 +336,8 @@
                 recentList.innerHTML = '<p class="no-recent">Aucun groupe récent</p>';
             }
         } catch (error) {
-            console.error('Erreur chargement historique:', error);
+            console.error('Erreur historique:', error);
+            showNotification('Erreur chargement groupes récents', 'error');
         }
     }
 
@@ -356,7 +348,6 @@
 
         document.body.appendChild(notification);
         setTimeout(() => notification.classList.add('show'), 100);
-
         setTimeout(() => {
             notification.classList.remove('show');
             setTimeout(() => notification.remove(), 300);
@@ -374,6 +365,7 @@
             });
         } catch (error) {
             console.error('Erreur log:', error);
+            showNotification('Erreur enregistrement action', 'error');
         }
     }
     </script>

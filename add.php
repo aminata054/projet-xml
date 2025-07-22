@@ -1,5 +1,10 @@
 <?php
-// Enable libxml error handling
+// Activer la gestion des erreurs PHP
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Activer la gestion des erreurs libxml
 libxml_use_internal_errors(true);
 
 // Fonction pour envoyer une réponse JSON
@@ -105,24 +110,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $numero_telephone = htmlspecialchars($_POST['numero_telephone'] ?? '');
         $status = htmlspecialchars($_POST['status'] ?? '');
 
-        // Generate new contact ID
+        // Vérifier doublon numéro
+        $existingContact = $xml->xpath("//contact[numero_telephone='$numero_telephone']");
+        if ($existingContact) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Numéro de téléphone déjà utilisé']);
+            exit;
+        }
+
+        // Générer un nouvel ID
         $existingIds = array_map('strval', $xml->xpath("//contact/@id"));
         $newId = empty($existingIds) ? 1 : max($existingIds) + 1;
 
-        // Add new contact to XML
+        // Ajouter le contact au XML
         $contact = $xml->discussions->contacts->addChild('contact');
         $contact->addAttribute('id', $newId);
         $contact->addChild('prenom', $prenom);
         $contact->addChild('nom', $nom);
         $contact->addChild('numero_telephone', $numero_telephone);
         $contact->addChild('status', $status);
+        $contact->addChild('photo_profile', 'images/image.png');
         $contact->addChild('messages');
 
-        // Handle photo upload
+        // Gestion de la photo
         if (!empty($_FILES['photo']['name'])) {
             $uploadDir = 'images/';
             if (!is_dir($uploadDir) || !is_writable($uploadDir)) {
-                die("Erreur : Le dossier 'images/' n'existe pas ou n'est pas inscriptible.");
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => "Dossier 'images/' non existant ou non inscriptible"]);
+                exit;
             }
             $photoName = 'contact_' . $newId . '_' . time() . '.' . pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION);
             $photoPath = $uploadDir . $photoName;

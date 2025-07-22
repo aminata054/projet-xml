@@ -44,23 +44,11 @@
       <groupe id="1">
         <nom_groupe>Projet XML</nom_groupe>
         <photo_groupe>images/groupe.png</photo_groupe>
-        <membres>
-          <contact id="1">
-            <nom>Sow</nom>
-            <prenom>Tidiane</prenom>
-            <numero_telephone>123456789</numero_telephone>
-            <photo_profile>tidiane.jpg</photo_profile>
-            <status>En ligne</status>
-          </contact>
-          <contact id="2">
-            <nom>Sané</nom>
-            <prenom>Alioune</prenom>
-            <numero_telephone>987654321</numero_telephone>
-            <photo_profile>alioune.jpg</photo_profile>
-            <status>Hors ligne</status>
-          </contact>
-        </membres>
         <admin ref="1"/>
+        <membres>
+          <membre ref="7"/>
+          <membre ref="8"/>
+        </membres>
         <messages>
           <message id="5" type="texte" expediteur="1">
             <contenu>Salut tout le monde!</contenu>

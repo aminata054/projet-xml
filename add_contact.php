@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajouter un contact - WhatsApp Web</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="enhanced_style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
     /* Ajout de styles inline pour rendre le formulaire carré avec une taille augmentée */
     .chat-container {
@@ -42,8 +41,9 @@
 <body>
     <div class="container chat-container" role="main">
         <div class="form-header">
-            <h2 aria-label="Ajouter un nouveau contact">➕ Ajouter un contact</h2>
-            <a href="index.php" class="back-button sidebar-button" aria-label="Retour à la page principale">← Retour</a>
+            <h2 aria-label="Ajouter un nouveau contact"><i class="fas fa-user-plus"></i> Ajouter un contact</h2>
+            <a href="index.php" class="back-button sidebar-button" aria-label="Retour à la page principale"><i
+                    class="fas fa-arrow-left"></i></a>
         </div>
 
         <!-- Barre de recherche pour vérifier les doublons -->
@@ -167,7 +167,6 @@
 
 
 
-        // Accessibilité pour la navigation au clavier
         form.querySelectorAll('input, select, button').forEach(element => {
             element.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' && this.tagName !== 'BUTTON') {
@@ -289,7 +288,7 @@
                 contacts.forEach(contact => {
                     html += `
                         <div class="search-item existing-contact" role="listitem">
-                            <img src="${contact.photo || 'images/default-avatar.png'}" alt="Photo de profil de ${contact.prenom} ${contact.nom}" class="contact-avatar">
+                            <img src="${contact.photo || 'images/default-avatar.png'}" alt="Photo de ${contact.prenom} ${contact.nom}" class="contact-avatar">
                             <div class="search-item-info">
                                 <span class="contact-name">${contact.prenom} ${contact.nom}</span>
                                 <small class="duplicate-warning">⚠️ Contact déjà existant</small>
@@ -305,8 +304,8 @@
                 searchResults.classList.remove('hidden');
             }
         } catch (error) {
-            console.error('Erreur de recherche:', error);
-            showNotification('Erreur lors de la recherche de contacts', 'error');
+            console.error('Erreur recherche:', error);
+            showNotification('Erreur recherche contacts', 'error');
         }
     }
 
@@ -333,8 +332,8 @@
                 recentList.innerHTML = '<p class="no-recent">Aucun contact récent</p>';
             }
         } catch (error) {
-            console.error('Erreur chargement historique:', error);
-            showNotification('Erreur lors du chargement des contacts récents', 'error');
+            console.error('Erreur historique:', error);
+            showNotification('Erreur chargement contacts récents', 'error');
         }
     }
 
@@ -347,7 +346,6 @@
 
         document.body.appendChild(notification);
         setTimeout(() => notification.classList.add('show'), 100);
-
         setTimeout(() => {
             notification.classList.remove('show');
             setTimeout(() => notification.remove(), 300);
@@ -365,7 +363,7 @@
             });
         } catch (error) {
             console.error('Erreur log:', error);
-            showNotification('Erreur lors de l\'enregistrement de l\'action', 'error');
+            showNotification('Erreur enregistrement action', 'error');
         }
     }
     </script>
