@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajouter un contact - WhatsApp Web</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
     <style>
     /* Ajout de styles inline pour rendre le formulaire carré avec une taille augmentée */
     .chat-container {
