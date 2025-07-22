@@ -1,16 +1,20 @@
 <?php
-// Inclure les nouvelles fonctionnalités
-require_once 'history.php';
-require_once 'auto_save.php';
+// Activer la gestion des erreurs
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+libxml_use_internal_errors(true);
 
 // Vérifier si le formulaire a été soumis
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Initialiser les gestionnaires
-    $history = new HistoryManager();
-    $autoSave = new AutoSaveManager('whatsapp.xml');
-    
     // Charger le fichier XML
-    $xml = simplexml_load_file('whatsapp.xml');
+    $xml = simplexml_load_file(__DIR__ . '/whatsapp.xml');
+    if ($xml === false) {
+        $errors = libxml_get_errors();
+        $errorMessages = array_map(fn($e) => $e->message . " at line " . $e->line, $errors);
+        echo json_encode(['success' => false, 'message' => 'Erreur lors du chargement du fichier XML : ' . implode(', ', $errorMessages)]);
+        exit;
+    }
 
     // Fonction pour générer un nouvel ID de message
     function getNewMessageId($xml) {
@@ -19,109 +23,86 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return $ids ? max($ids) + 1 : 1;
     }
 
+    // Valider les champs obligatoires
+    if (empty($_POST['expediteur'])) {
+        echo json_encode(['success' => false, 'message' => 'Expéditeur requis']);
+        exit;
+    }
+    if (empty($_POST['contenu_message']) || (empty($_POST['destinataire']) && empty($_POST['groupe']))) {
+        echo json_encode(['success' => false, 'message' => 'Contenu du message et destinataire ou groupe requis']);
+        exit;
+    }
+
+    $expediteurId = htmlspecialchars($_POST['expediteur']);
+    $contenuMessage = htmlspecialchars($_POST['contenu_message']);
+    $nouvelId = getNewMessageId($xml);
+
+    // Vérifier que l'expéditeur existe
+    $expediteurObj = $xml->xpath("//contact[@id='$expediteurId']");
+    if (empty($expediteurObj)) {
+        echo json_encode(['success' => false, 'message' => "L'expéditeur avec l'ID $expediteurId n'existe pas"]);
+        exit;
+    }
+
     // Envoi de message à un contact
-    if (!empty($_POST['destinataire']) && !empty($_POST['contenu_message'])) {
-        $destinataireId = filter_var($_POST['destinataire'], FILTER_VALIDATE_INT);
-        $contenuMessage = htmlspecialchars($_POST['contenu_message'], ENT_QUOTES, 'UTF-8');
-        $expediteurId = filter_var($_POST['expediteur'], FILTER_VALIDATE_INT);
-
-        if (!$destinataireId || !$expediteurId) {
-            die("Erreur : IDs invalides");
-        }
-
-        // Trouver le contact correspondant
+    if (!empty($_POST['destinataire'])) {
+        $destinataireId = htmlspecialchars($_POST['destinataire']);
         $contactObj = $xml->xpath("//contact[@id='$destinataireId']");
 
         if ($contactObj) {
-            // Générer un nouvel identifiant pour le message
-            $nouvelId = getNewMessageId($xml);
-
-            // Créer un nouvel élément de message
             $nouveauMessage = $contactObj[0]->messages->addChild('message');
             $nouveauMessage->addAttribute('id', $nouvelId);
             $nouveauMessage->addAttribute('type', 'texte');
             $nouveauMessage->addAttribute('expediteur', $expediteurId);
             $nouveauMessage->addAttribute('destinataire', $destinataireId);
-
-            // Ajouter le contenu du message
             $nouveauMessage->addChild('contenu', $contenuMessage);
-
-            // Ajouter les informations sur le message
             $messageInfo = $nouveauMessage->addChild('message_info');
             $messageInfo->addAttribute('heure', date('Y-m-d\TH:i:s'));
             $messageInfo->addAttribute('statut', 'envoye');
 
-            // Enregistrer les modifications dans le fichier XML
-            $xml->asXML('whatsapp.xml');
-            
-            // Logger l'action
-            $contactName = (string)$contactObj[0]->prenom . ' ' . (string)$contactObj[0]->nom;
-            $history->logAction('send_message', "Message envoyé à $contactName: $contenuMessage", $expediteurId);
-            
-            // Créer une sauvegarde
-            $autoSave->createBackup();
-
-            // Rediriger vers index.php
-            header('Location: index.php');
+            // Enregistrer le XML
+            if ($xml->asXML(__DIR__ . '/whatsapp.xml')) {
+                echo json_encode(['success' => true, 'message' => 'Message envoyé avec succès']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Erreur lors de la sauvegarde du fichier XML']);
+            }
             exit;
         } else {
-            echo "Erreur : Le contact avec l'ID $destinataireId n'existe pas.";
+            echo json_encode(['success' => false, 'message' => "Le contact avec l'ID $destinataireId n'existe pas"]);
+            exit;
         }
     }
 
     // Envoi de message à un groupe
-    if (!empty($_POST['groupe']) && !empty($_POST['contenu_message'])) {
-        $groupeId = filter_var($_POST['groupe'], FILTER_VALIDATE_INT);
-        $contenuMessage = htmlspecialchars($_POST['contenu_message'], ENT_QUOTES, 'UTF-8');
-        $expediteurId = filter_var($_POST['expediteur'], FILTER_VALIDATE_INT);
-
-        if (!$groupeId || !$expediteurId) {
-            die("Erreur : IDs invalides");
-        }
-
-        // Trouver le groupe correspondant
+    if (!empty($_POST['groupe'])) {
+        $groupeId = htmlspecialchars($_POST['groupe']);
         $groupeObj = $xml->xpath("//groupe[@id='$groupeId']");
 
         if ($groupeObj) {
-            // Générer un nouvel identifiant pour le message
-            $nouvelId = getNewMessageId($xml);
-
-            // Créer un nouvel élément de message
             $nouveauMessage = $groupeObj[0]->messages->addChild('message');
             $nouveauMessage->addAttribute('id', $nouvelId);
             $nouveauMessage->addAttribute('type', 'texte');
             $nouveauMessage->addAttribute('expediteur', $expediteurId);
-
-            // Ajouter le contenu du message
             $nouveauMessage->addChild('contenu', $contenuMessage);
-
-            // Ajouter les informations sur le message
             $messageInfo = $nouveauMessage->addChild('message_info');
             $messageInfo->addAttribute('heure', date('Y-m-d\TH:i:s'));
             $messageInfo->addAttribute('statut', 'envoye');
 
-            // Enregistrer les modifications dans le fichier XML
-            $xml->asXML('whatsapp.xml');
-            
-            // Logger l'action
-            $groupeName = (string)$groupeObj[0]->nom_groupe;
-            $history->logAction('send_group_message', "Message envoyé au groupe $groupeName: $contenuMessage", $expediteurId);
-            
-            // Créer une sauvegarde
-            $autoSave->createBackup();
-
-            // Rediriger vers index.php
-            header('Location: index.php');
+            // Enregistrer le XML
+            if ($xml->asXML(__DIR__ . '/whatsapp.xml')) {
+                echo json_encode(['success' => true, 'message' => 'Message envoyé avec succès']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Erreur lors de la sauvegarde du fichier XML']);
+            }
             exit;
         } else {
-            echo "Erreur : Le groupe avec l'ID $groupeId n'existe pas.";
+            echo json_encode(['success' => false, 'message' => "Le groupe avec l'ID $groupeId n'existe pas"]);
+            exit;
         }
     }
 
-    // Si les champs requis ne sont pas remplis
-    if ((isset($_POST['destinataire']) || isset($_POST['groupe']) || isset($_POST['contenu_message'])) && 
-        (empty($_POST['contenu_message']) || (empty($_POST['destinataire']) && empty($_POST['groupe'])))) {
-        echo "Erreur : Veuillez remplir tous les champs du formulaire.";
-    }
+    // Si aucun destinataire ou groupe n'est spécifié
+    echo json_encode(['success' => false, 'message' => 'Destinataire ou groupe requis']);
+    exit;
 }
 ?>

@@ -8,6 +8,9 @@ const expediteurInput = form.querySelector("input[name='expediteur']");
 const dynamicSettings = document.querySelector("#dynamic-settings");
 const settingsLink = document.querySelector("#settings-link");
 
+// Variable globale pour stocker l'utilisateur actuellement sélectionné
+let currentUser = null;
+
 if (!window.messages || !window.contacts || !window.groupes || !window.allContacts) {
     console.error("Les objets 'messages', 'contacts', 'groupes' ou 'allContacts' ne sont pas définis.");
     if (dynamicSettings) {
@@ -118,6 +121,26 @@ function updateSettingsLink(user) {
     }
 }
 
+function updateFormFields(user) {
+    // Réinitialiser les champs
+    destinataireInput.value = "";
+    groupeInput.value = "";
+
+    if (user.startsWith("contact-")) {
+        // Pour un contact individuel
+        const contactId = user.replace("contact-", "");
+        destinataireInput.value = contactId;
+        groupeInput.value = "";
+    } else if (user.startsWith("groupe-")) {
+        // Pour un groupe
+        const groupeId = user.replace("groupe-", "");
+        destinataireInput.value = "";
+        groupeInput.value = groupeId;
+    }
+
+    console.log('Formulaire mis à jour - Destinataire:', destinataireInput.value, 'Groupe:', groupeInput.value);
+}
+
 function switchConversation(e) {
     const selectedItem = e.currentTarget;
     console.log('Chat item cliqué:', selectedItem.dataset.user);
@@ -127,6 +150,9 @@ function switchConversation(e) {
     const user = selectedItem.dataset.user;
     const name = selectedItem.dataset.name;
     const avatar = selectedItem.dataset.avatar;
+
+    // Mettre à jour la variable globale
+    currentUser = user;
 
     // Update chat header
     chatHeader.innerHTML = `
@@ -142,6 +168,9 @@ function switchConversation(e) {
     const userMessages = window.messages[user] || [];
     chatBody.innerHTML = userMessages.map(msg => createMessageHTML(msg, isGroup)).join("");
     console.log('Messages affichés:', userMessages);
+
+    // Mettre à jour les champs du formulaire
+    updateFormFields(user);
 
     // Update right sidebar
     if (!dynamicSettings) {
@@ -179,8 +208,8 @@ function switchConversation(e) {
             dynamicSettings.innerHTML = '<h3>Erreur</h3><p>Groupe non trouvé.</p>';
         }
     } else {
-        console.error('Type d’utilisateur non reconnu:', user);
-        dynamicSettings.innerHTML = '<h3>Erreur</h3><p>Type d’utilisateur non reconnu.</p>';
+        console.error('Type d\'utilisateur non reconnu: ', user);
+        dynamicSettings.innerHTML = '<h3>Erreur</h3><p>Type d\'utilisateur non reconnu.</p>';
     }
 
     // Update settings link
@@ -189,9 +218,53 @@ function switchConversation(e) {
     chatBody.scrollTop = chatBody.scrollHeight;
 }
 
+// Gestionnaire pour l'envoi de messages
+function handleMessageSend(e) {
+    e.preventDefault();
+
+    const messageInput = form.querySelector("input[name='contenu_message']");
+    const messageContent = messageInput.value.trim();
+
+    if (!messageContent) {
+        alert("Veuillez saisir un message.");
+        return;
+    }
+
+    if (!currentUser) {
+        alert("Veuillez sélectionner une conversation.");
+        return;
+    }
+
+    // Vérifier que les champs sont correctement remplis
+    console.log('Envoi du message:', {
+        destinataire: destinataireInput.value,
+        groupe: groupeInput.value,
+        expediteur: expediteurInput.value,
+        contenu: messageContent
+    });
+
+    // Soumettre le formulaire
+    form.submit();
+}
+
+// Event listeners
 chatItems.forEach(item => {
     item.addEventListener("click", switchConversation);
 });
+
+// Ajouter le gestionnaire d'événement pour l'envoi de messages
+form.addEventListener("submit", handleMessageSend);
+
+// Gestion de l'envoi avec la touche Entrée
+const messageInput = form.querySelector("input[name='contenu_message']");
+if (messageInput) {
+    messageInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            handleMessageSend(e);
+        }
+    });
+}
 
 if (chatItems.length > 0) {
     console.log('Sélection du premier chat item');

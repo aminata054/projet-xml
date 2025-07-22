@@ -87,12 +87,15 @@ if ($xml === false) {
                 <!-- Les messages seront chargés dynamiquement via JavaScript -->
             </div>
 
-            <form class="chat-footer" action="add.php" method="post">
+            <form class="chat-footer" action="add.php" method="post" id="message-form">
                 <input type="hidden" name="destinataire" value="">
                 <input type="hidden" name="groupe" value="">
                 <input type="hidden" name="expediteur" value="1">
-                <input type="text" name="contenu_message" placeholder="Tapez un message..." />
-                <button type="submit" class="chat-button">Envoyer</button>
+                <div class="message-input-container">
+                    <input type="text" name="contenu_message" placeholder="Tapez un message..." required
+                        autocomplete="off" />
+                    <button type="submit" class="chat-button">Envoyer</button>
+                </div>
             </form>
         </main>
 
